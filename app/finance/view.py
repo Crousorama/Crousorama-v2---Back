@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.alphavantage.controller import get_stock_from_yahoo
-from app.alphavantage.model import DataStock
+from app.finance.controller import get_stock_from_yahoo
+from app.finance.model import DataStock
 
 router = APIRouter()
 

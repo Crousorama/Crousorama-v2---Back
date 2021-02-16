@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.services.dependencies import get_token_header
 
 from app.user_stocks import router as user_stocks_router
-from app.alphavantage import router as stocks_router
+from app.finance import router as stocks_router
 
 app = FastAPI()
 
