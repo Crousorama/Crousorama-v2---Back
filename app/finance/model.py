@@ -25,3 +25,11 @@ class SearchResult(BaseModel):
     typeDisp: Optional[str]
     longname: Optional[str]
     isYahooFinance: Optional[str]
+
+
+class Palmares(BaseModel):
+    indice: str
+    meta: str
+    value: str
+    variation: str
+

@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter
 
 from app.finance.controller import get_stock_from_yahoo, search_stocks, get_palmares, get_palmares_dividend
-from app.finance.model import DataStock, SearchResult
+from app.finance.model import DataStock, SearchResult, Palmares
 
 router = APIRouter()
 
@@ -13,14 +13,14 @@ async def search(q: str):
     return search_stocks(q)
 
 
-@router.get('/palmares')
+@router.get('/palmares', response_model=List[Palmares])
 async def palmares():
     return get_palmares()
 
 
 @router.get('/palmares_dividends')
-async def palmares_dividends(page: int = 1):
-    return get_palmares_dividend(1)
+async def palmares_dividends():
+    return get_palmares_dividend()
 
 
 @router.get('/{stock}', response_model=DataStock)

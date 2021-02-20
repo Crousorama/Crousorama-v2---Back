@@ -50,26 +50,33 @@ def palmares_already_pushed(quote, array):
     return len(matches) > 0
 
 
-def get_palmares_dividend(page):
-    req = requests.get('https://www.boursorama.com/bourse/actions/palmares/dividendes/page-{}'
-                       .format(page if page is not None else '1'))
-    html = req.text
-    soup = BeautifulSoup(html, features="html.parser")
-    rows = soup.findAll('tr', {'class': 'c-table__row'})
-    headers = []
+def get_palmares_dividend():
     dividends = []
-    for idx, row in enumerate(rows):
-        tmp = {}
-        for idx_cell, cell in enumerate(row.contents):
-            if idx == 0:
-                headers.append(cell.text)
-            else:
-                try:
-                    tmp[headers[idx_cell]] = parse_spaces(cell.text)
-                except AttributeError as e:
-                    continue
-        if tmp != {}:
-            dividends.append(tmp)
+    for page in [1, 2, 3]:
+        req = requests.get('https://www.boursorama.com/bourse/actions/palmares/dividendes/page-{}'
+                           .format(page if page is not None else '1'))
+        html = req.text
+        soup = BeautifulSoup(html, features="html.parser")
+        rows = soup.findAll('tr', {'class': 'c-table__row'})
+        headers = []
+        for idx, row in enumerate(rows):
+            tmp = {}
+            for idx_cell, cell in enumerate(row.contents):
+                if idx == 0:
+                    headers.append(cell.text)
+                else:
+                    try:
+                        tmp[headers[idx_cell]] = parse_spaces(cell.text)
+
+                        cell_link_soup = BeautifulSoup(str(cell))
+                        link = cell_link_soup.find('a')
+                        if link:
+                            splitted = link.attrs.get('href').split('/')
+                            tmp['symbol'] = splitted[len(splitted) - 2].replace('1rP', '')
+                    except AttributeError as e:
+                        continue
+            if tmp != {}:
+                dividends.append(tmp)
     return dividends
 
 
