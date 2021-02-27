@@ -4,6 +4,7 @@ from app.services.dependencies import get_token_header
 
 from app.user_stocks import router as user_stocks_router
 from app.finance import router as stocks_router
+from app.news import router as news_router
 
 app = FastAPI()
 
@@ -33,6 +34,14 @@ app.include_router(stocks_router,
                    responses={404: {"description": "Not found"}},
                    )
 
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
+app.include_router(news_router,
+                   prefix="/api/news",
+                   tags=["News"],
+                   dependencies=[Depends(get_token_header)],
+                   responses={404: {"description": "Not found"}},
+                   )
+
+
+@app.get('/_ah/warmup')
+def warmup():
+    return {'message': 'ok'}

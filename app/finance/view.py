@@ -2,7 +2,11 @@ from typing import List
 
 from fastapi import APIRouter
 
-from app.finance.controller import get_stock_from_yahoo, search_stocks, get_palmares, get_palmares_dividend
+from app.finance.controller import get_stock_from_yahoo, \
+    search_stocks, \
+    get_palmares, \
+    get_palmares_dividend
+
 from app.finance.model import DataStock, SearchResult, Palmares
 
 router = APIRouter()
@@ -24,5 +28,6 @@ async def palmares_dividends():
 
 
 @router.get('/{stock}', response_model=DataStock)
-async def get_stock(stock: str):
-    return get_stock_from_yahoo(stock)
+async def get_stock(stock: str, date_range: str = '1d'):
+    return get_stock_from_yahoo(stock, date_range)
+

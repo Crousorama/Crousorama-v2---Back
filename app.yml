@@ -1,0 +1,5 @@
+runtime: python38
+service: api
+entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+inbound_services:
+- warmup

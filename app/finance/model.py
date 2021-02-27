@@ -4,15 +4,13 @@ from typing import List, Optional
 
 class DataStock(BaseModel):
     symbol: str
-    # open: Optional[float]
-    # high: Optional[float]
-    # low: Optional[float]
     price: float
-    # volume: Optional[int]
-    # latest_trading_day: Optional[str]
+    currency: str
+    full_name: str
     previous_close: float
-    # change: Optional[float]
-    # change_percent: Optional[str]
+    validRanges: List[str]
+    timestamps: List[int]
+    prices: dict
 
 
 class SearchResult(BaseModel):
@@ -32,4 +30,3 @@ class Palmares(BaseModel):
     meta: str
     value: str
     variation: str
-
