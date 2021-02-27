@@ -18,8 +18,8 @@ def read_stocks(email):
         return stocks_firebase
     else:
         stocks = UserStocks()
-        stocks.pea = []
-        stocks.titres = []
+        stocks.stocks = []
+        # stocks.titres = []
         return update_stocks(email, stocks)
 
 

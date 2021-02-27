@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class Stock(BaseModel):
@@ -10,5 +10,4 @@ class Stock(BaseModel):
 
 
 class UserStocks(BaseModel):
-    pea: List[Stock] = []
-    titres: List[Stock] = []
+    stocks: Optional[List[Stock]] = []
