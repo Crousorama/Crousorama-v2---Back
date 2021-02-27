@@ -13,17 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - shell: bash
+      - run: 'echo "$CONFIG" > config/__init__.py'
+        shell: bash
         env:
-          CONFIG: ${{ secrets.CONFIG }}
-        run: |
-          echo $CONFIG config/__init__.py
+          CONFIG: ${{secrets.CONFIG}}
 
-      - shell: bash
+
+      - run: 'echo "$FIRESTORE_SERVICE_ACCOUNT" > config/credentials/firestore_service_account.json'
+        shell: bash
         env:
-          FIRESTORE_SERVICE_ACCOUNT: ${{ secrets.FIRESTORE_SERVICE_ACCOUNT }}
-        run: |
-          echo $FIRESTORE_SERVICE_ACCOUNT config/credentials/firestore_service_account.json
+          FIRESTORE_SERVICE_ACCOUNT: ${{secrets.FIRESTORE_SERVICE_ACCOUNT}}
+
 
       - name: Initialize Google Cloud SDK
         uses: zxyle/publish-gae-action@master
