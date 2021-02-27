@@ -4,6 +4,8 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 # Use a service account
+from app.user_stocks.model import UserStocks
+
 cred = credentials.Certificate('config/credentials/firestore_service_account.json')
 firebase_admin.initialize_app(cred)
 
@@ -15,7 +17,10 @@ def read_stocks(email):
     if stocks_firebase:
         return stocks_firebase
     else:
-        raise HTTPException(status_code=404, detail="User not found")
+        stocks = UserStocks()
+        stocks.pea = []
+        stocks.titres = []
+        return update_stocks(email, stocks)
 
 
 def update_stocks(email, stocks):
