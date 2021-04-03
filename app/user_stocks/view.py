@@ -14,6 +14,7 @@ async def get(x_goog_authenticated_user_email: Optional[str] = Header(None)):
     :param x_goog_authenticated_user_email: email of the user making the call
     :return: list of user's stocks
     """
+    print(f"current user: {x_goog_authenticated_user_email}")
     return get_user_stocks(x_goog_authenticated_user_email)
 
 

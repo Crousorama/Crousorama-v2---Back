@@ -4,3 +4,4 @@ firestore_service_account.json
 __pycache__
 */__pycache__
 .idea
+app/user_stocks/__pycache__/view.cpython-37.pyc
