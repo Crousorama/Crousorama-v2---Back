@@ -13,24 +13,37 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: 'echo "$CONFIG" > config/__init__.py'
-        shell: bash
-        env:
-          CONFIG: ${{secrets.CONFIG}}
+#      - run: 'echo "$CONFIG" > config/__init__.py'
+#        shell: bash
+#        env:
+#          CONFIG: ${{secrets.CONFIG}}
+#
+#
+#      - run: 'echo "$FIRESTORE_SERVICE_ACCOUNT" > config/credentials/firestore_service_account.json'
+#        shell: bash
+#        env:
+#          FIRESTORE_SERVICE_ACCOUNT: ${{secrets.FIRESTORE_SERVICE_ACCOUNT}}
 
 
-      - run: 'echo "$FIRESTORE_SERVICE_ACCOUNT" > config/credentials/firestore_service_account.json'
-        shell: bash
-        env:
-          FIRESTORE_SERVICE_ACCOUNT: ${{secrets.FIRESTORE_SERVICE_ACCOUNT}}
+#      - name: Initialize Google Cloud SDK
+#        uses: zxyle/publish-gae-action@master
+#        with:
+#          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+#          service_account_key: ${{ secrets.GCP_SA_KEY }}
+#          project_id: ${{ secrets.PROJECT_ID }}
 
-
-      - name: Initialize Google Cloud SDK
-        uses: zxyle/publish-gae-action@master
+      - name: Authenticate on GCS
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
+          version: '270.0.0'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Copy credentials
+        run: gsutil cp gs://crousorama-credentials/back/firestore_service_account.json config/credentials/firestore_service_account.json
+
+      - name: Copy config
+        run: gsutil cp gs://crousorama-credentials/back/__init__.py config/__init__.py
 
       - name: Publish app to Google App Engine
         run: |
