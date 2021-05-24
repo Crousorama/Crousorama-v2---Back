@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.services.dependencies import get_token_header
@@ -45,3 +46,7 @@ app.include_router(news_router,
 @app.get('/_ah/warmup')
 def warmup():
     return {'message': 'ok'}
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
