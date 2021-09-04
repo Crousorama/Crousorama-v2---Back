@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+from app.services.yahoo import get_headers_for_yahoo
+
 INTERVAL_MAPPING = {
     "1d": "2m", # 2m
     "5d": "15m",
@@ -14,37 +16,45 @@ INTERVAL_MAPPING = {
 
 
 def get_stock_from_yahoo(stock, date_range):
-    print(f'https://query1.finance.yahoo.com/v8/finance/chart/{stock}?region=FR&interval={INTERVAL_MAPPING[date_range]}&lang=fr-FR&range={date_range}&corsDomain=fr.finance.yahoo.com')
     r = requests.get(
-        f'https://query1.finance.yahoo.com/v8/finance/chart/{stock}?region=FR&interval={INTERVAL_MAPPING[date_range]}&lang=fr-FR&range={date_range}&corsDomain=fr.finance.yahoo.com')
+        f'https://query1.finance.yahoo.com/v8/finance/chart/{stock}?region=FR&interval={INTERVAL_MAPPING[date_range]}&lang=fr-FR&range={date_range}&corsDomain=fr.finance.yahoo.com',
+        headers=get_headers_for_yahoo()
+    )
     r_json = r.json()
-    symbol_data = requests.get(f'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={stock}&region=1&lang=en')
-    symbol_data = symbol_data.json()
     try:
-        return {
-            "symbol": r_json['chart']['result'][0]['meta']['symbol'],
-            "full_name": symbol_data['ResultSet']['Result'][0]['name'] if len(symbol_data['ResultSet']['Result']) > 0 else "",
-            "price": r_json['chart']['result'][0]['meta']['regularMarketPrice'],
-            "currency": r_json['chart']['result'][0]['meta']['currency'],
-            "previous_close": r_json['chart']['result'][0]['meta']['chartPreviousClose'],
-            "validRanges": r_json['chart']['result'][0]['meta']['validRanges'],
-            "timestamps": r_json['chart']['result'][0]['timestamp'] if 'timestamp' in r_json['chart']['result'][0] else [],
-            "prices": r_json['chart']['result'][0]['indicators']['quote'][0],
+        symbol_data = requests.get(
+            f'https://query2.finance.yahoo.com/v1/finance/quoteType/{stock}?lang=fr-FR&region=FR&corsDomain=fr.finance.yahoo.com',
+            headers=get_headers_for_yahoo()
+        )
+        symbol_data = symbol_data.json()
+    except Exception as e:
+        print("ERROR WITH")
+        print(f'https://query1.finance.yahoo.com/v8/finance/chart/{stock}?region=FR&interval={INTERVAL_MAPPING[date_range]}&lang=fr-FR&range={date_range}&corsDomain=fr.finance.yahoo.com')
+        print(str(e))
+        symbol_data = {
+            "quoteType": {
+                "result": [
+                    {"longName": stock}
+                ]
+            }
         }
-    except IndexError as e:
-        print("symbol_data")
-        print("symbol_data")
-        print("symbol_data")
-        print(symbol_data)
-        print("r_json")
-        print("r_json")
-        print("r_json")
-        print(r_json)
-        raise e
+    return {
+        "symbol": r_json['chart']['result'][0]['meta']['symbol'],
+        "full_name": symbol_data['quoteType']['result'][0]['longName'] if len(symbol_data['quoteType']['result']) > 0 else "",
+        "price": r_json['chart']['result'][0]['meta']['regularMarketPrice'],
+        "currency": r_json['chart']['result'][0]['meta']['currency'],
+        "previous_close": r_json['chart']['result'][0]['meta']['chartPreviousClose'],
+        "validRanges": r_json['chart']['result'][0]['meta']['validRanges'],
+        "timestamps": r_json['chart']['result'][0]['timestamp'] if 'timestamp' in r_json['chart']['result'][0] else [],
+        "prices": r_json['chart']['result'][0]['indicators']['quote'][0],
+    }
 
 
 def search_stocks(search):
-    r = requests.get(f"https://query1.finance.yahoo.com/v1/finance/search?q={search}&quotesCount=5")
+    r = requests.get(
+        f"https://query1.finance.yahoo.com/v1/finance/search?q={search}&quotesCount=5",
+        headers=get_headers_for_yahoo()
+    )
     r_json = r.json()
     return r_json['quotes']
 
